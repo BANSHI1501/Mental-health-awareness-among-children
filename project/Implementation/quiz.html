@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Quest</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Comfortaa) -->
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Comfortaa', cursive;
+            background: linear-gradient(135deg, #e6f0fa, #d9e4f5, #c3d7e8);
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .question-container {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            animation: fadeUp 0.8s ease-out;
+            border: 2px solid #a3bffa;
+        }
+        .question-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 2rem;
+            line-height: 1.3;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        .option-button {
+            background: #f7fafc;
+            color: #4a5568;
+            font-size: 1.25rem;
+            border: 2px solid #a3bffa;
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 85%;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .option-button:hover {
+            background: #a3bffa;
+            color: #fff;
+            transform: translateY(-4px);
+            box-shadow: 0 6px 18px rgba(163, 191, 250, 0.4);
+        }
+        .option-button.selected {
+            background: #a3bffa;
+            color: #fff;
+            transform: translateY(-4px);
+            box-shadow: 0 6px 18px rgba(163, 191, 250, 0.4);
+        }
+        .emoji {
+            font-size: 1.75rem;
+            margin-left: 0.75rem;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            width: 100%;
+            gap: 1rem;
+        }
+        .prev-btn, .next-btn {
+            padding: 0.75rem 2rem;
+            background: #a3bffa;
+            color: #fff;
+            border-radius: 2rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(163, 191, 250, 0.3);
+        }
+        .prev-btn:hover, .next-btn:hover {
+            background: #7f9cf5;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(127, 156, 245, 0.5);
+        }
+        .hidden {
+            display: none;
+        }
+        .error-message {
+            color: #e53e3e;
+            font-weight: 700;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            background: #fff5f5;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 10px rgba(229, 62, 62, 0.2);
+        }
+        .progress-ring {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 60px;
+            height: 60px;
+        }
+        .progress-ring-circle {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: #a3bffa;
+            stroke-width: 6;
+            stroke-linecap: round;
+            transform: translate(5px, 5px) rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .progress-ring-fill {
+            stroke: #4f5bd5;
+            stroke-dasharray: 157;
+            stroke-dashoffset: 157;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        .progress-ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1rem;
+            color: #4f5bd5;
+            font-weight: 700;
+        }
+        .bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23a3bffa" fill-opacity="0.1" fill-rule="evenodd"%3E%3Cpath d="M0 40L40 0H20L0 20zM40 40V20L20 40z"/%3E%3C/g%3E%3C/svg%3E');
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 640px) {
+            .question-text { font-size: 1.5rem; }
+            .option-button { font-size: 1rem; padding: 0.75rem 1rem; width: 100%; }
+            .prev-btn, .next-btn { font-size: 1rem; padding: 0.5rem 1.5rem; }
+            .emoji { font-size: 1.5rem; }
+            .progress-ring { width: 50px; height: 50px; }
+            .progress-ring-text { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="container">
+        <div class="question-container">
+            <div class="progress-ring">
+                <svg class="progress-ring-circle">
+                    <circle cx="25" cy="25" r="25" />
+                    <circle cx="25" cy="25" r="25" class="progress-ring-fill" id="progressFill" />
+                </svg>
+                <div class="progress-ring-text" id="progressText">1/10</div>
+            </div>
+            <h2 class="question-text">Your Mental Health Quest 🌈</h2>
+            <form id="assessmentForm" action="http://localhost/Project%20Team%20Weaver/project/php/quiz.php" method="POST">
+                <div id="questionContent"></div>
+
+                <!-- Hidden inputs -->
+                <input type="hidden" id="q1" name="q1">
+                <input type="hidden" id="q2" name="q2">
+                <input type="hidden" id="q3" name="q3">
+                <input type="hidden" id="q4" name="q4">
+                <input type="hidden" id="q5" name="q5">
+                <input type="hidden" id="q6" name="q6">
+                <input type="hidden" id="q7" name="q7">
+                <input type="hidden" id="q8" name="q8">
+                <input type="hidden" id="q9" name="q9">
+                <input type="hidden" id="q10" name="q10">
+
+                <div class="btn-container">
+                    <button type="button" id="prevBtn" class="prev-btn hidden"><i class="fas fa-arrow-left"></i> Back</button>
+                    <button type="button" id="nextBtn" class="next-btn">Next <i class="fas fa-arrow-right"></i></button>
+                    <button type="submit" id="submitBtn" class="next-btn hidden">Finish <i class="fas fa-check"></i></button>
+                </div>
+
+                <div id="errorMessage" class="error-message hidden">Please pick an answer to move on!</div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "How’s your day feeling today? 🌞", options: ["Cloudy 😞", "So-so 😐", "Sunny 🙂", "Bright 😊"] },
+            { question: "How often do you smile big? 😄", options: ["Rarely 😔", "Sometimes 😊", "Often 😃", "Always 🌟"] },
+            { question: "Do you feel blue for no reason? 🌧️", options: ["Never 😎", "Sometimes 😕", "Often 😢", "Always 😭"] },
+            { question: "Do worries visit your mind? 🌀", options: ["Never 😌", "Sometimes 🤔", "Often 😟", "Always 😓"] },
+            { question: "Do worries keep you awake? 🌙", options: ["Never 😴", "Sometimes 😑", "Often 😧", "Always 😵"] },
+            { question: "Enjoy time with your pals? 🌼", options: ["Not really 😞", "Kinda 😐", "Yes 😊", "Love it 🌈"] },
+            { question: "Feel alone in a crowd? 🌌", options: ["Never 😇", "Sometimes 😢", "Often 😔", "Always 😞"] },
+            { question: "Feel tired all the time? 💤", options: ["Never 😃", "Sometimes 😴", "Often 😩", "Always 😴"] },
+            { question: "Get upset easily? 🌩️", options: ["Never 😺", "Sometimes 😕", "Often 😣", "Always 😤"] },
+            { question: "Have someone to talk to? 💬", options: ["No one 😞", "Sometimes 🤷", "Often 😊", "Always 🗣️"] }
+        ];
+
+        let currentQuestionIndex = 0;
+        let selectedOptionIndex = -1;
+
+        const questionContent = document.getElementById('questionContent');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 157;
+            progressFill.style.strokeDashoffset = 157 - progress;
+            progressText.textContent = `${currentQuestionIndex + 1}/${questions.length}`;
+        }
+
+        function displayQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionContent.innerHTML = `
+                <div class="question-text">${question.question}</div>
+                <div class="options">
+                    ${question.options.map((option, index) => `
+                        <button type="button" class="option-button" onclick="selectAnswer(${index})">${option}</button>
+                    `).join('')}
+                </div>
+            `;
+
+            prevBtn.classList.toggle('hidden', currentQuestionIndex === 0);
+            nextBtn.classList.toggle('hidden', currentQuestionIndex === questions.length - 1);
+            submitBtn.classList.toggle('hidden', currentQuestionIndex !== questions.length - 1);
+
+            const optionButtons = document.querySelectorAll('.option-button');
+            optionButtons.forEach((btn, index) => {
+                btn.classList.toggle('selected', index === selectedOptionIndex);
+            });
+
+            updateProgress();
+        }
+
+        function selectAnswer(answerIndex) {
+            selectedOptionIndex = answerIndex;
+            document.getElementById(`q${currentQuestionIndex + 1}`).value = answerIndex + 1;
+            errorMessage.classList.add('hidden');
+            displayQuestion();
+        }
+
+        function validateAnswer() {
+            if (selectedOptionIndex === -1) {
+                errorMessage.classList.remove('hidden');
+                return false;
+            }
+            return true;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            currentQuestionIndex--;
+            selectedOptionIndex = parseInt(document.getElementById(`q${currentQuestionIndex + 1}`).value) - 1 || -1;
+            displayQuestion();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (validateAnswer()) {
+                currentQuestionIndex++;
+                selectedOptionIndex = -1;
+                displayQuestion();
+            }
+        });
+
+        submitBtn.addEventListener('click', (e) => {
+            if (validateAnswer()) {
+                document.getElementById('assessmentForm').submit();
+            } else {
+                e.preventDefault();
+            }
+        });
+
+        displayQuestion();
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindBloom - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-r from-blue-200 via-teal-200 to-green-200 flex justify-center items-center p-6">
+
+    <!-- Login Form Container -->
+    <div class="bg-white shadow-xl rounded-lg p-8 w-full sm:w-96">
+        <h2 class="text-4xl font-semibold text-center text-teal-600 mb-6">MindHorizon</h2>
+        <p class="text-center text-lg text-gray-600 mb-4">Welcome back! Please login to your account.</p>
+
+        <!-- Login Form -->
+        <form method="POST" action="http://localhost/Project%20Team%20Weaver/project/php/login.php" class="flex flex-col space-y-6 mt-4">
+
+            <input type="email" name="email" placeholder="Enter your email" required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none text-gray-700 text-lg">
+
+            <input type="password" name="password" placeholder="Enter your password" required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none text-gray-700 text-lg">
+
+            <button type="submit" 
+                class="w-full bg-teal-500 text-white py-3 rounded-lg font-medium text-lg hover:bg-teal-600 transition duration-200">
+                Login
+            </button>
+
+        </form>
+
+        <!-- Register & Forgot Password Links -->
+        <div class="mt-6 text-center">
+            <p class="text-gray-600">Don't have an account? <a href="register.html" class="text-teal-500 font-semibold hover:underline">Sign Up</a></p>
+            <p class="text-gray-600 mt-2"><a href="forgot-password.html" class="text-teal-500 font-semibold hover:underline">Forgot Password?</a></p>
+        </div>
+    </div>
+
+</body>
+</html>
