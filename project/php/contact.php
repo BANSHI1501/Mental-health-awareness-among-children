@@ -1,42 +1,41 @@
 <?php
-// Check if form was submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Sanitize and collect input values
-    $name = htmlspecialchars(trim($_POST["name"]));
-    $email = filter_var(trim($_POST["email"]), FILTER_SANITIZE_EMAIL);
-    $subject = htmlspecialchars(trim($_POST["subject"]));
-    $message = htmlspecialchars(trim($_POST["message"]));
+session_start();
+require 'db.php';
 
-    // Validate fields
-    if (empty($name) || empty($email) || empty($message)) {
-        echo "Please fill in all required fields.";
-        exit;
+if ($_SERVER["Contact_Submit"] == "POST") {
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $subject = trim($_POST['subject']);
+    $message = trim($_POST['message']);
+    // Check if all fields are filled
+    if (empty($name) || empty($email) || empty($subject) || empty($message)) {
+        echo "<script>alert('All fields are required!'); window.location.href='http://localhost/Project%20Team%20Weaver/project/Implementation/Contact_page.html';</script>";
+        exit();
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "Invalid email address.";
-        exit;
+    // Check if user already exists
+    $stmt = $conn->prepare("SELECT id FROM contact_form WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        echo "<script>alert('User already exists! Try logging in.'); window.location.href='http://localhost/Project%20Team%20Weaver/project/Implementation/Contact_page.html';</script>";
+        exit();
     }
 
-    // Email setup
-    $to = "hello@mindhorizon.org"; // Change to your desired email
-    $fullSubject = "Contact Form Submission: " . ($subject ?: "No Subject");
-    $body = "You have received a new message from the contact form.\n\n" .
-            "Name: $name\n" .
-            "Email: $email\n" .
-            "Subject: $subject\n" .
-            "Message:\n$message";
 
-    $headers = "From: $name <$email>\r\n" .
-               "Reply-To: $email\r\n";
+    // Insert new user
+    $stmt = $conn->prepare("INSERT INTO contact_form (name, email, subject, message) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("sss", $name, $email, $subject, $message);
 
-    // Send email
-    if (mail($to, $fullSubject, $body, $headers)) {
-        echo "Thank you, $name! Your message has been sent successfully.";
+    if ($stmt->execute()) {
+        echo "<script>alert('Message send Succesfully'); window.location.href='http://localhost/Project%20Team%20Weaver/project/Implementation/home.html';</script>";
     } else {
-        echo "Oops! Something went wrong, and we couldn't send your message.";
+        echo "<script>alert('Failed. Please try again.'); window.location.href='http://localhost/Project%20Team%20Weaver/project/Implementation/Contact_page.html';</script>";
     }
-} else {
-    echo "Invalid request method.";
+
+    $stmt->close();
+    $conn->close();
 }
 ?>
